@@ -358,5 +358,63 @@
             </div>
         </section>
     </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Optional: remove unobserve if you want the animation to happen repeatedly when scrolling up/down
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, observerOptions);
+
+            // Select elements to receive the fade-in-up animation
+            const selectorsToAnimate = [
+                '.section-header', 
+                '.stage-card', 
+                '.highlight-item',
+                '.about-content-col h2',
+                '.about-content-col .check-item',
+                '.about-text',
+                '.program-card',
+                '.review-card',
+                '.hero-left h1',
+                '.hero-left p',
+                '.hero-buttons'
+            ];
+
+            selectorsToAnimate.forEach(selector => {
+                document.querySelectorAll(selector).forEach((el, index) => {
+                    // Pre-apply the base styling class
+                    el.classList.add('reveal');
+                    
+                    // Create cascading delays for grouped items (like cards) to create a beautiful staggered effect
+                    if (el.classList.contains('stage-card') || el.classList.contains('highlight-item')) {
+                        el.style.transitionDelay = `${(index % 4) * 150}ms`;
+                    } else if (el.classList.contains('check-item')) {
+                        el.style.transitionDelay = `${index * 150}ms`;
+                    } else if (el.classList.contains('program-card')) {
+                        el.style.transitionDelay = `${index * 200}ms`;
+                    } else if (el.tagName.toLowerCase() === 'p' && el.parentElement.classList.contains('hero-left')) {
+                        el.style.transitionDelay = `200ms`;
+                    } else if (el.classList.contains('hero-buttons')) {
+                        el.style.transitionDelay = `400ms`;
+                    }
+                    
+                    // Begin observing
+                    observer.observe(el);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

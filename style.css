@@ -76,14 +76,14 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 75%; /* Cobre a largura até o ponto de corte transversal da diagonal */
+    width: 75%; /* Voltando para 75% no desktop para não cobrir a mulher toda */
     height: 100%;
     z-index: 2; /* Fica entre a imagem e o texto */
     
-    /* Inicia com roxo sólido pra cobrir o lado do texto e começa a ficar transparente a partir de 45%, afinando até 30% na extremidade afiada. */
+    /* Restaurado para o gradiente original do desktop */
     background: linear-gradient(110deg, var(--bg-dark) 0%, var(--bg-dark) 45%, rgba(55, 33, 102, 0.3) 100%);
     
-    /* Corte transversal perfeitamente "Afiado" (nem esfumaçar) */
+    /* Restaurado para o corte transversal original que você gostou */
     clip-path: polygon(0 0, 100% 0, 50% 100%, 0 100%);
     pointer-events: none;
 }
@@ -122,7 +122,7 @@ body {
 .hero-image {
     width: 100%;
     height: 100%;
-    background-image: url('hero3.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url('hero3.png');
     background-size: cover;
     background-position: right center; /* Mantém a mulher focada na direita */
 }
@@ -469,7 +469,7 @@ body {
 /* Parallax Section */
 
 .parallax-section {
-    background-image: url('parallax-bg.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url('parallax-bg.png');
     background-attachment: fixed;
     background-size: cover;
     background-position: right center;
@@ -683,10 +683,54 @@ body {
 }
 
 @media (max-width: 1024px) {
-    .hero::after {
-        display: none !important; /* Desativa overlay geométrico focado no desktop */
+    .hero {
+        flex-direction: column;
+        justify-content: flex-start;
+        height: auto;
+        min-height: 65vh; /* Quase quadrado para forçar a imagem deitada a aparecer mais inteira */
+        padding-top: 4rem;
     }
     
+    .hero h1 {
+        font-size: 2.2rem; /* Fonte reduzida para caber no formato quase quadrado */
+        margin-bottom: 0.8rem;
+    }
+    
+    .hero p {
+        font-size: 0.95rem; /* Subtítulo menor para liberar visão do background */
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero::after {
+        display: block !important;
+        width: 100% !important;
+        /* Gradiente contínuo vindo do topo esquerdo (135deg) sumindo gradualmente pro transparente, sem "corte duro" */
+        background: linear-gradient(135deg, #2b2260 0%, rgba(43, 34, 96, 0.95) 30%, rgba(43, 34, 96, 0.6) 60%, rgba(43, 34, 96, 0) 100%) !important;
+        /* Corte triangular dividindo a tela ao meio EXCLUSIVO PARA MOBILE */
+        clip-path: polygon(0 0, 100% 0, 0 100%) !important;
+    }
+    
+    .hero-left {
+        background: transparent !important;
+        padding: 1rem 10% 2rem 10%;
+        width: 100%;
+        margin-top: 0; /* Remove aquele salto pra baixo para preencher melhor a frente */
+        z-index: 3;
+    }
+    
+    .hero-right {
+        position: absolute !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0; left: 0;
+        order: 0;
+        z-index: 1;
+    }
+    
+    .hero-image {
+        background-position: center bottom; /* Alinha a mulher (geralmente embaixo e à direita) */
+    }
+
     .about-section {
         flex-direction: column;
     }
@@ -706,30 +750,14 @@ body {
     }
     
     .parallax-section {
-        background-attachment: scroll; /* Disable parallax on mobile due to iOS issues usually */
+        background-attachment: fixed; 
         background-position: center right;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), url('parallax-bg.png');
     }
     .parallax-content {
         max-width: 100%;
     }
     
-    .hero {
-        flex-direction: column;
-    }
-    .hero-left {
-        background: var(--bg-dark);
-        padding-bottom: 4rem;
-        padding-top: 4rem;
-    }
-    .hero-right {
-        position: relative;
-        width: 100%;
-        height: 50vh;
-        order: -1;
-    }
-    .hero-image {
-        transform: none;
-    }
     .journey-grid {
         grid-template-columns: 1fr;
     }
@@ -747,7 +775,17 @@ body {
     }
 }
 
+/* --- SCROLL ANIMATIONS --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 
 
