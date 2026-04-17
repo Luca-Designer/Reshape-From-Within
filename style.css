@@ -215,8 +215,8 @@ body {
 /* About Section (Split Layout) */
 .about-section {
     display: flex;
-    min-height: 80vh;
-    background: #2b2260; /* Dark purple matching weblium */
+    background: #262262;
+    overflow: hidden;
 }
 
 .about-image-col {
@@ -224,13 +224,13 @@ body {
 }
 .about-image-col img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
 }
 
 .about-content-col {
     width: 50%;
-    padding: 8rem 6rem;
+    padding: 6rem 6rem; /* Ajuste suave no padding */
     display: flex;
     flex-direction: column;
     justify-content: center;
