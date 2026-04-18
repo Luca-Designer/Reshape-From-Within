@@ -61,11 +61,13 @@ body {
     align-items: center;
 }
 
-/* Hero Section Refatorada para Dois Containers */
+/* Hero Section Refatorada para Dois Containers — Formato Retrato 9:16 */
 .hero {
     position: relative; /* Essencial para o overlay absoluto cobrir corretamente */
     display: flex;
-    min-height: 100vh;
+    height: 100vh; /* Cobre a tela inteira do visitante */
+    height: 100svh; /* Small viewport height — respeita barras de navegação em mobile */
+    max-height: 100vh;
     background-color: var(--bg-darker);
     overflow: hidden;
 }
@@ -466,13 +468,32 @@ body {
     background-color: #3bbcc2;
 }
 
-/* Parallax Section */
+/* Parallax com position:sticky — funciona em iOS + Android + Desktop */
 
-.parallax-section {
+/* Container que define o scopo do sticky */
+.parallax-outer {
+    position: relative;
+    overflow: clip; /* Clipa o sticky-bg sem quebrar o comportamento sticky (diferente de hidden) */
+}
+
+/* Fundo que fica grudado ao topo do viewport enquanto a section passa */
+.parallax-sticky-bg {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    margin-bottom: -100vh; /* Colapsa o espaço: content começa na mesma posição do bg */
     background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url('parallax-bg.png');
-    background-attachment: fixed;
     background-size: cover;
     background-position: right center;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Section transparente — o bg atrás mostra seu fundo */
+.parallax-section {
+    position: relative;
+    z-index: 1;
+    background: transparent;
     padding: 8rem 10%;
     min-height: 80vh;
     display: flex;
@@ -482,6 +503,8 @@ body {
 
 .parallax-content {
     max-width: 65%;
+    position: relative;
+    z-index: 1;
 }
 
 .parallax-content h2 {
@@ -543,6 +566,8 @@ body {
 
 /* Final CTA */
 .final-cta {
+    position: relative; /* Garante renderização acima do parallax sticky bg */
+    z-index: 1;
     background-color: #f4f5f8;
     padding: 4rem 10% 8rem 10%;
 }
@@ -566,6 +591,8 @@ body {
 
 /* Stage Breakdown Redesign */
 .stage-breakdown.dark-bg {
+    position: relative; /* Garante renderização acima do parallax sticky bg */
+    z-index: 1;
     background-color: #2b2260;
     padding: 8rem 10%;
     color: white;
@@ -709,8 +736,9 @@ body {
     .hero {
         flex-direction: column;
         justify-content: flex-start;
-        height: auto;
-        min-height: 65vh; /* Quase quadrado para forçar a imagem deitada a aparecer mais inteira */
+        height: 100vh; /* Full screen portrait em mobile */
+        height: 100svh;
+        max-height: 100vh;
         padding-top: 4rem;
     }
     
@@ -750,7 +778,7 @@ body {
         z-index: 1;
     }
     .hero-image {
-        background-image: linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)), url('hero_mobile.png') !important;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.50)), url('hero_mobile.png') !important;
         background-position: center top; /* Garante que foque no corpo da atleta já que a imagem é retrato */
     }
 
@@ -804,9 +832,12 @@ body {
     }
     
     .parallax-section {
-        background-attachment: fixed; /* O usuário preferiu o parallax fixo e a estética da imagem presa. */
-        background-position: center right;
+        /* transparent — bg controlado pelo .parallax-sticky-bg */
+    }
+    .parallax-sticky-bg {
+        /* Overlay mais escuro em mobile para melhor legibilidade */
         background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), url('parallax-bg.png');
+        background-position: center right;
     }
     .parallax-content {
         max-width: 100%;
@@ -878,15 +909,13 @@ body {
 /* --- SCROLL ANIMATIONS --- */
 .reveal {
     opacity: 0;
-    transform: translateY(40px);
-    /* Otimização de Performance: Animar especificamente Transform e Opacity aciona a placa de vídeo (GPU) sem bugar o scroll nativo do celular */
-    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-    will-change: opacity, transform;
+    /* Apenas opacity: sem translateY para evitar saltos de scroll em mobile */
+    transition: opacity 0.7s ease-out;
+    will-change: opacity;
 }
 
 .reveal.active {
     opacity: 1;
-    transform: translateY(0);
 }
 
 
